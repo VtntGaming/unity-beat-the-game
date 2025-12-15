@@ -248,6 +248,9 @@ public class SlimeBossAI : MonoBehaviour
         StopMoving();
         animator.Play("Death");
         col.enabled = false;
+        GameObject portal = GameObject.FindWithTag("Portal");
+        if (portal)
+            portal.SetActive(true);
         yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length);
         Destroy(gameObject);
     }

@@ -17,6 +17,13 @@ TagManager:
   - Audio
   - Shop
   - Boss
+  - ground
+  - Obstacle
+  - BombPickup
+  - ExplosionFX
+  - Bullet
+  - HealthBar
+  - Portal
   layers:
   - Default
   - TransparentFX
