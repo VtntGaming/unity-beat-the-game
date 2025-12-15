@@ -1,0 +1,22 @@
+public enum Sound
+{
+    Jump,
+    Land,
+    AttackMelee,
+    AttackRanged,
+    PlayerProjectileHit,
+    HurtPlayer,
+    Death,
+    Checkpoint,
+    Roll,
+    Dash,
+    Block,
+    revive,
+    PickUpCoin,
+    PickUpHealthPotion,
+    PickUpBuff,
+    OpenChest,
+    SlimeBossSlam,
+    EnemyProjectile,
+    EnemyMelee
+}

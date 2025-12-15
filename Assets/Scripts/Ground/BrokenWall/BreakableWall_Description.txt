@@ -1,0 +1,57 @@
+1️⃣ BreakableTile
+
+Loại: Tile Asset trong Tilemap.
+
+Chức năng: Chứa sprite của ô có thể phá.
+
+Sử dụng: Dùng trong Tilemap để định nghĩa các ô mà player có thể tấn công và phá hủy.
+
+Ghi chú: Không có logic code, chỉ là dữ liệu đồ họa (sprite) cho Tilemap.
+
+2️⃣ BreakableRock
+
+Loại: Prefab vật lý rơi ra khi một tile bị phá.
+
+Thành phần chính:
+
+SpriteRenderer: Hiển thị hình ảnh của rock (có thể lấy sprite từ tile gốc).
+
+Rigidbody2D: Cho rock rơi theo trọng lực và chịu lực.
+
+BoxCollider2D: Tương tác vật lý (nếu cần).
+
+BreakableRock.cs (nếu có): Fade dần và tự hủy sau một thời gian.
+
+Nhiệm vụ: Tạo hiệu ứng vật lý khi tile bị phá, xuất hiện nhiều rock bay ra.
+
+3️⃣ BreakableTilemap
+
+Loại: Script gắn vào Tilemap.
+
+Chức năng:
+
+Quản lý tilemap có thể phá (ví dụ BreakableWall).
+
+Khi player tấn công:
+
+Xác định tile bị trúng (WorldToCell).
+
+Xóa tile khỏi tilemap (SetTile(cell, null)).
+
+Spawn nhiều BreakableRock prefab.
+
+(Tùy chọn) spawn hiệu ứng particle hoặc gọi BreakableRock.cs để fade/hủy.
+
+Ghi chú: Đây là nơi xử lý logic phá tile + tạo rock.
+
+4️⃣ BreakableTilemapManager
+
+Loại: Script quản lý tổng thể các tilemap có thể phá trong scene.
+
+Chức năng:
+
+Khởi tạo, lưu trữ tham chiếu đến các BreakableTilemap.
+
+Gọi hàm phá tile từ BreakableTilemap (ví dụ khi projectile chạm tilemap).
+
+Giúp tách quản lý tilemap ra khỏi player/projectile, dễ mở rộng nếu có nhiều tilemap.

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5a071b5f9a19a498d2e4ba7b766a67, type: 3}
+  m_Name: Rarity_Rare
+  m_EditorClassIdentifier: 
+  rarityName: 2
+  frameSprite: {fileID: -1937555851702403715, guid: 4cbf511a0a2112945b6decb44d429d65, type: 3}
+  minStatMultiplier: 1.15
+  maxStatMultiplier: 1.25

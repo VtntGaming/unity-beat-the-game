@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 61704efa79a5c3641b8dc590d2f14862
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - coinPrefab: {fileID: 6016030534326057393, guid: 6f4e5d914b0b7c94db8ebcc383b51ba1, type: 3}
+  - healthPotionPrefab: {fileID: 1500066604316138782, guid: d37fee57d66238c49b05140ea2d47629, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 3
+  tags:
+  - Ground
+  - Wall
+  - Enemy
+  - Object
+  - CheckPoint
+  - Orb
+  - Projectile
+  - EffectZone
+  - Trap
+  - platform
+  - Audio
+  - Shop
+  - Boss
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - Player
+  - Water
+  - UI
+  - Ground
+  - Wall
+  - Enemy
+  - Object
+  - BreakableWall
+  - PlayerAttack
+  - Boss
+  - BossProjectile
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: BackGround
+    uniqueID: 1311048715
+    locked: 0
+  - name: Wall
+    uniqueID: 1079652129
+    locked: 0
+  - name: Ground
+    uniqueID: 467762237
+    locked: 0
+  - name: Interaction
+    uniqueID: 1088713445
+    locked: 0
+  - name: NPC
+    uniqueID: 676386251
+    locked: 0
+  - name: Player
+    uniqueID: 4153177349
+    locked: 0
+  - name: ForeGround
+    uniqueID: 2699181171
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: UI
+    uniqueID: 1943924479
+    locked: 0
+  m_RenderingLayers:
+  - Default
