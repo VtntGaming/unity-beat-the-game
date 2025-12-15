@@ -6,6 +6,21 @@ public class SkillListing
     public Dictionary<string, List<Skills>> list = new Dictionary<string, List<Skills>>();
 
     private Skills previousSkill;
+
+    public Skills[] GetUnlockedSkills() {
+        List<Skills> unlockedSkills = new List<Skills>();
+        foreach (KeyValuePair<string, List<Skills>> category in list)
+        {
+            foreach (Skills skill in category.Value)
+            {
+                if (!skill.IsLocked())
+                {
+                    unlockedSkills.Add(skill);
+                }
+            }
+        }
+        return unlockedSkills.ToArray();
+    }
     private void add(string name, float buffAmount, string type = "Default", bool setPreviousAsRequirement = true)
     {
         Skills skill;

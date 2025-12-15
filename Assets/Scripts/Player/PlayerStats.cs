@@ -27,6 +27,10 @@ public class PlayerStats : MonoBehaviour
     // Multiplier này giờ CHỈ DÀNH CHO BUFF
     public float FinalDamageMultiplier { get; private set; }
 
+    // Skill tree
+    [Header("Skill listing")]
+    public SkillListing skillListing = new SkillListing();
+
     // Tham chiếu
     private PlayerController playerController;
 

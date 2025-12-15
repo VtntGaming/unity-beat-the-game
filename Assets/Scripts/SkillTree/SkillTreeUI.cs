@@ -13,7 +13,7 @@ public class SkillTreeUI : MonoBehaviour
     private Button TriggerButton;
     void Awake()
     {
-        skillListing = new SkillListing();
+        skillListing = GameObject.FindFirstObjectByType<PlayerStats>().skillListing;
         overlay = transform.Find("Overlay").gameObject;
     }
     void Start()
