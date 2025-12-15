@@ -6,8 +6,7 @@ public class CameraFixed : MonoBehaviour
     public float smoothSpeed = 5f; // Smooth follow speed
     public float minZoom = 3f;  // Minimum zoom level
     public float maxZoom = 10f; // Maximum zoom level
-    public float zoomSpeed = 1f; // Speed of zoom in/out
-
+    public float zoomSpeed = 2f; // Speed of zoom in/out
     private Camera cam;
     void BindPlayer()
     {

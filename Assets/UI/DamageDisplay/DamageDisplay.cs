@@ -60,7 +60,7 @@ public class DamageDisplay : MonoBehaviour
         if (isHeal == true) {
             text.color = new Color32(142, 255, 82, 255);
         }
-        text.text = Damage.ToString();
+        text.text = string.Format("{0:F0}", Damage);
 
         rect.localPosition = localPos;
         rect.localScale = new Vector2(1, 1);

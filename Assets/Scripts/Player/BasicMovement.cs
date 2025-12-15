@@ -46,7 +46,7 @@ public class BasicMovement : MonoBehaviour
     [Header("Component References")]
     private Animator anim;
     private Rigidbody2D rb;
-    private Collider2D boxCollider;
+    private CapsuleCollider2D capsuleCollider;
     private Entity playerHealth;
     private BasicBlocking basicBlocking;
 
@@ -86,7 +86,7 @@ public class BasicMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
-        boxCollider = GetComponent<CapsuleCollider2D>();
+        capsuleCollider = GetComponent<CapsuleCollider2D>();
         playerHealth = GetComponent<Entity>();
         rb.freezeRotation = true;
         basicBlocking = GetComponent<BasicBlocking>();
@@ -410,7 +410,7 @@ public class BasicMovement : MonoBehaviour
     void CheckRollInput()
     {
         // Nếu người chơi nhấn Ctrl, đang giữ S, chưa Roll, và đang ở trên mặt đất
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !isRolling && IsGround())
+        if ((Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.S)) && !isRolling && IsGround())
         {
             StartCoroutine(PerformRoll());  // Bắt đầu Roll với Coroutine
             anim.SetTrigger("Roll");       // Kích hoạt trigger Roll trong Animator
@@ -426,6 +426,8 @@ public class BasicMovement : MonoBehaviour
 
         float rollDirection = transform.localScale.x;  // Determine roll direction (1 = right, -1 = left)
         float rollTimer = 0f;  // Timer to control roll duration
+        capsuleCollider.size = new Vector2(0.75f, 0.75f);
+        capsuleCollider.offset = new Vector2(0, 0.425f);
 
         while (rollTimer < rollDuration)
         {
@@ -445,6 +447,9 @@ public class BasicMovement : MonoBehaviour
             yield return null;  // Wait for the next frame
         }
 
+        capsuleCollider.size = new Vector2(0.75f, 1.3f);
+        capsuleCollider.offset = new Vector2(0, 0.7f);
+
         // Reset gravity and exit rolling state after roll ends
         rb.gravityScale = initialGravity;
         isRolling = false;
@@ -452,18 +457,18 @@ public class BasicMovement : MonoBehaviour
 
     public bool IsGround()
     {
-        float minY = boxCollider.bounds.min.y;
-        Vector2 checkPos = new Vector2(boxCollider.bounds.center.x, minY - 0.1f);
-        Vector2 checkSize = new Vector2(boxCollider.bounds.size.x * 0.9f, 0.2f);
+        float minY = capsuleCollider.bounds.min.y;
+        Vector2 checkPos = new Vector2(capsuleCollider.bounds.center.x, minY - 0.1f);
+        Vector2 checkSize = new Vector2(capsuleCollider.bounds.size.x * 0.9f, 0.2f);
         Collider2D hit = Physics2D.OverlapBox(checkPos, checkSize, 0f, groundLayer);
         return hit != null;
     }
 
     private bool IsTouchingWall()
     {
-        Vector2 leftPos = (Vector2)boxCollider.bounds.center + Vector2.left * 0.5f; // Tăng từ 0.5f lên 0.6f
-        Vector2 rightPos = (Vector2)boxCollider.bounds.center + Vector2.right * 0.5f;
-        Vector2 checkSize = new Vector2(0.01f, boxCollider.bounds.size.y * 0.6f);
+        Vector2 leftPos = (Vector2)capsuleCollider.bounds.center + Vector2.left * 0.5f; // Tăng từ 0.5f lên 0.6f
+        Vector2 rightPos = (Vector2)capsuleCollider.bounds.center + Vector2.right * 0.5f;
+        Vector2 checkSize = new Vector2(0.01f, capsuleCollider.bounds.size.y * 0.6f);
         bool leftHit = Physics2D.OverlapBox(leftPos, checkSize, 0f, wallLayer) != null;
         bool rightHit = Physics2D.OverlapBox(rightPos, checkSize, 0f, wallLayer) != null;
         return (leftHit || rightHit);
@@ -471,9 +476,9 @@ public class BasicMovement : MonoBehaviour
 
     private float CurrentWallX()
     {
-        Vector2 leftPos = (Vector2)boxCollider.bounds.center + Vector2.left * 0.6f; // Tăng từ 0.5f lên 0.6f
-        Vector2 rightPos = (Vector2)boxCollider.bounds.center + Vector2.right * 0.6f;
-        Vector2 checkSize = new Vector2(0.2f, boxCollider.bounds.size.y * 0.9f);
+        Vector2 leftPos = (Vector2)capsuleCollider.bounds.center + Vector2.left * 0.6f; // Tăng từ 0.5f lên 0.6f
+        Vector2 rightPos = (Vector2)capsuleCollider.bounds.center + Vector2.right * 0.6f;
+        Vector2 checkSize = new Vector2(0.2f, capsuleCollider.bounds.size.y * 0.9f);
         RaycastHit2D leftHit = Physics2D.BoxCast(leftPos, checkSize, 0f, Vector2.left, 0f, wallLayer);
         RaycastHit2D rightHit = Physics2D.BoxCast(rightPos, checkSize, 0f, Vector2.right, 0f, wallLayer);
 

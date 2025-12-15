@@ -18,6 +18,13 @@ public class MovementAI : MonoBehaviour
     public float teleportDropHeight = 4.0f;
     public LayerMask obstacleLayer;
 
+    [Header("Teleport Effect (New)")]
+    public GameObject teleportFlamePrefab; // Kéo Prefab lửa vào đây
+    public Transform teleportEffectCenter; // Kéo cái Empty Object (tâm lửa) vào đây
+    public float teleportDamage = 25f;     // Sát thương của lửa
+    public float castTime = 0.5f;          // Thời gian Boss đứng gồng (Animation) trước khi biến mất
+    // ------------------
+
     [Header("Smart Detection (QUAN TRỌNG)")]
     public float bodyCollisionRadius = 0.6f; // Bán kính thân người để check va chạm
     public int trajectorySteps = 30;         // Số bước vẽ đường đạn
@@ -132,31 +139,128 @@ public class MovementAI : MonoBehaviour
         isBusy = false;
     }
 
+    //public IEnumerator Action_Teleport(Vector3 rawDestination)
+    //{
+    //    isBusy = true;
+    //    Vector3 destination = ClampToZone(rawDestination);
+
+    //    // 1. Dừng mọi chuyển động vật lý
+    //    rb.linearVelocity = Vector2.zero;
+
+    //    // 2. Kích hoạt Animation (Gồng/Chuẩn bị nhảy)
+    //    if (animator != null) animator.Play("Idle"); // Hoặc đổi thành "TeleportStart" nếu có anim riêng
+
+    //    // 3. TRIỆU HỒI LỬA (NGAY VỊ TRÍ CŨ)
+    //    if (teleportFlamePrefab != null && teleportEffectCenter != null)
+    //    {
+    //        // Sinh ra lửa tại vị trí của teleportEffectCenter
+    //        GameObject flame = Instantiate(teleportFlamePrefab, teleportEffectCenter.position, Quaternion.identity);
+
+    //        // Setup damage cho lửa
+    //        TeleportFlame flameScript = flame.GetComponent<TeleportFlame>();
+    //        if (flameScript != null) flameScript.Setup(teleportDamage);
+    //    }
+
+    //    // 4. CHỜ ANIMATION (Để người chơi thấy lửa bùng lên và Boss biến mất hợp lý)
+    //    yield return new WaitForSeconds(castTime);
+
+    //    // ====================================================
+    //    // BẮT ĐẦU DỊCH CHUYỂN (Logic cũ)
+    //    // ====================================================
+
+    //    // Tính toán vị trí đáp (Spawn từ trên trời rơi xuống)
+    //    Vector3 spawn = destination;
+    //    RaycastHit2D hit = Physics2D.Raycast(destination, Vector2.up, teleportDropHeight + 1f, obstacleLayer);
+
+    //    if (hit.collider != null) spawn.y = hit.point.y - 1.5f; // Nếu đụng trần thì spawn dưới trần 1 chút
+    //    else spawn.y += teleportDropHeight; // Nếu không thì spawn trên cao theo setting
+
+    //    // Dịch chuyển tức thời tới vị trí mới
+    //    transform.position = spawn;
+
+    //    // Reset vận tốc lần nữa cho chắc
+    //    rb.linearVelocity = Vector2.zero;
+
+    //    // 5. CHỜ RƠI XUỐNG ĐẤT
+    //    // Đợi 1 frame để vật lý cập nhật
+    //    yield return new WaitForSeconds(0.1f);
+
+    //    // Vòng lặp chờ chạm đất
+    //    while (!isGrounded) yield return null;
+
+    //    // 6. KẾT THÚC
+    //    rb.linearVelocity = Vector2.zero;
+
+    //    // (Tùy chọn) Chỉnh lại vị trí Y chính xác theo đích đến để tránh bị trôi
+    //    transform.position = new Vector3(destination.x, transform.position.y, transform.position.z);
+
+    //    isBusy = false;
+    //}
+    // Mới
     public IEnumerator Action_Teleport(Vector3 rawDestination)
     {
         isBusy = true;
+
+        // 1. TÍNH TOÁN VỊ TRÍ ĐÍCH NGAY LẬP TỨC (Đưa lên đầu hàm)
+        // Để biết chỗ mà thả lửa bên kia
         Vector3 destination = ClampToZone(rawDestination);
 
-        if (animator != null) animator.SetTrigger("Jump");
-        rb.linearVelocity = new Vector2(0, 3f);
-        yield return new WaitForSeconds(0.2f);
-
-        Vector3 spawn = destination;
+        // Tính toán điểm Boss sẽ xuất hiện (Trên trời rơi xuống)
+        Vector3 spawnPos = destination;
         RaycastHit2D hit = Physics2D.Raycast(destination, Vector2.up, teleportDropHeight + 1f, obstacleLayer);
-        if (hit.collider != null) spawn.y = hit.point.y - 1.5f;
-        else spawn.y += teleportDropHeight;
 
-        transform.position = spawn;
+        if (hit.collider != null) spawnPos.y = hit.point.y - 1.5f; // Đụng trần
+        else spawnPos.y += teleportDropHeight; // Không đụng trần
+
+        // 2. DỪNG BOSS & ANIMATION
+        rb.linearVelocity = Vector2.zero;
+        if (animator != null) animator.Play("Idle");
+
+        // 3. TRIỆU HỒI LỬA (Ở CẢ 2 NƠI)
+        if (teleportFlamePrefab != null)
+        {
+            // A. Lửa tại chỗ cũ (Dùng teleportEffectCenter nếu có, không thì lấy chân Boss)
+            Vector3 startFirePos = (teleportEffectCenter != null) ? teleportEffectCenter.position : transform.position;
+            GameObject flameStart = Instantiate(teleportFlamePrefab, startFirePos, Quaternion.identity);
+
+            // B. Lửa tại chỗ mới (Tại đích đến - destination)
+            // Lưu ý: Ta dùng 'destination' (mặt đất) để lửa mọc từ đất lên, chứ không dùng 'spawnPos' (trên trời)
+            GameObject flameEnd = Instantiate(teleportFlamePrefab, destination, Quaternion.identity);
+
+            // C. Setup damage cho cả 2 ngọn lửa
+            TeleportFlame script1 = flameStart.GetComponent<TeleportFlame>();
+            if (script1 != null) script1.Setup(teleportDamage);
+
+            TeleportFlame script2 = flameEnd.GetComponent<TeleportFlame>();
+            if (script2 != null) script2.Setup(teleportDamage);
+        }
+
+        // 4. CHỜ DIỄN HOẠT (Lúc này người chơi thấy 2 cột lửa bùng lên)
+        yield return new WaitForSeconds(castTime);
+
+        // ====================================================
+        // BẮT ĐẦU DỊCH CHUYỂN
+        // ====================================================
+
+        // Dịch chuyển tức thời tới vị trí trên trời đã tính ở bước 1
+        transform.position = spawnPos;
+
+        // Reset vận tốc
         rb.linearVelocity = Vector2.zero;
 
+        // 5. CHỜ RƠI XUỐNG ĐẤT
         yield return new WaitForSeconds(0.1f);
         while (!isGrounded) yield return null;
 
+        // 6. KẾT THÚC
         rb.linearVelocity = Vector2.zero;
+
+        // Chỉnh lại vị trí X chuẩn xác (tránh bị trôi khi rơi)
         transform.position = new Vector3(destination.x, transform.position.y, transform.position.z);
 
         isBusy = false;
     }
+
 
     public void Continuous_WalkTo(Vector3 rawDestination)
     {

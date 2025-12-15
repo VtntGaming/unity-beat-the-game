@@ -1,4 +1,3 @@
 repository "BeatTheGame/BeatTheGame@18968259590333@cloud"
   path "/"
-    br "/main"
-    co "/main"
+    smartbranch "/main/ui-work" changeset "169"

@@ -53,7 +53,7 @@ public class AttackAI : MonoBehaviour
     [Header("Skill: Fireball (AttackRange1)")]
     public GameObject fireballPrefab;
 
-    // --- CÁC BIẾN MỚI ---
+    // --- FIRE BALL ---
     [Tooltip("Kích thước vùng xuất hiện đạn (Rộng x Cao)")]
     public Vector2 spawnAreaSize = new Vector2(2.0f, 3.0f);
 
@@ -62,6 +62,19 @@ public class AttackAI : MonoBehaviour
 
     [Range(1, 10)] public int minProjectiles = 1; // Số đạn tối thiểu
     [Range(1, 10)] public int maxProjectiles = 3; // Số đạn tối đa
+    // --------------------
+
+    // --- FIRE HAND ---
+    [Header("Skill: Fire Hand (Attack 2)")]
+    public GameObject fireHandPrefab;
+    public float handDamage = 30f;
+    [Tooltip("Khoảng cách chặn đầu (mét)")]
+    public float interceptDistance = 3.5f;
+    [Tooltip("Độ to của bàn tay (Mặc định 1, chỉnh lên 2 hoặc 3 nếu thấy bé)")]
+    public Vector3 handScale = new Vector3(2f, 2f, 1f); // <--- THÊM DÒNG NÀY
+    [Tooltip("Chỉnh độ cao (Dương là lên cao, Âm là chìm xuống đất)")]
+    public float handHeightOffset = 0.5f;
+
     // --------------------
 
     // Bạn có thể thêm IcePrefab, LightningPrefab ở đây...
@@ -75,6 +88,12 @@ public class AttackAI : MonoBehaviour
 
     [Tooltip("Kéo object đại diện độ cao Tầng 2 (để bom rơi trúng sàn tầng 2)")]
     public Transform floor2Point;
+
+    // --- THÊM DÒNG NÀY ---
+    [Tooltip("Độ trễ giữa mỗi quả bom (Số càng nhỏ rải càng nhanh). Mặc định 0.05s")]
+    public float rainSpawnDelay = 0.05f;
+    [Tooltip("Thời gian nghỉ giữa các đợt mưa (Rải xong đợt 1 -> Nghỉ X giây -> Rải đợt 2)")]
+    public float waveDelay = 2.0f;
     // -----------------------
 
     public float rainSpacing = 2.0f;
@@ -164,6 +183,7 @@ public class AttackAI : MonoBehaviour
             }
 
             // B. RISK SYSTEM
+            // B. RISK SYSTEM (Đã đơn giản hóa)
             riskTimer += Time.deltaTime;
             if (riskTimer >= riskInterval)
             {
@@ -172,9 +192,17 @@ public class AttackAI : MonoBehaviour
                 if (dice < currentSkillChance)
                 {
                     movement.StopImmediate();
+
+                    // CHỈ CẦN GỌI HÀM NÀY LÀ XONG
+                    // Nó sẽ tự chọn Fireball hay FireHand dựa trên Weight bạn cài ở Inspector
                     BossSkillData selectedSkill = PickRandomSkill();
-                    if (selectedSkill != null) yield return StartCoroutine(PerformSkillFromData(selectedSkill));
-                    else yield return StartCoroutine(PerformAttack2());
+                    
+                    if (selectedSkill != null) 
+                    {
+                        Debug.Log($"[AI] Skill Triggered: {selectedSkill.skillName}");
+                        yield return StartCoroutine(PerformSkillFromData(selectedSkill));
+                    }
+
                     currentSkillChance = baseSkillChance;
                     yield return StartCoroutine(PerformRetreat());
                     yield break;
@@ -386,28 +414,68 @@ public class AttackAI : MonoBehaviour
 
     IEnumerator PerformSkillFromData(BossSkillData skill)
     {
-        // KIỂM TRA ĐẶC BIỆT: Nếu là skill "FireRain", phải Teleport lên cao trước
+        // 1. XỬ LÝ ĐẶC BIỆT: Skill Mưa Lửa (FireRain)
         if (skill.skillName == "FireRain" && highPoint != null)
         {
-            // Debug.Log("Ulti Triggered: Teleporting to High Point...");
-
-            // 1. Teleport lên trần nhà
+            // A. Teleport lên trần nhà (Đợi teleport xong)
             yield return StartCoroutine(movement.Action_Teleport(highPoint.position));
 
-            // 2. Quay mặt xuống dưới hoặc về phía Player (Tùy chọn)
-            // FaceTargetInstant(player.position); 
+            // B. Bật Animation múa may
+            animator.SetTrigger(skill.animTrigger);
+
+            // C. Gọi hàm rải bom và ĐỢI NÓ XONG (Thêm yield return ở đây)
+            // --- SỬA DÒNG NÀY ---
+            yield return StartCoroutine(FireRainRoutine());
         }
+        // 2. XỬ LÝ ĐẶC BIỆT: Skill Bàn Tay Lửa (FireHand)
+        else if (skill.skillName == "FireHand")
+        {
+            FaceTargetInstant(player.position);
+
+            // [TRIGGER LẦN 1 - ĐÚNG]
+            animator.SetTrigger(skill.animTrigger);
+
+            yield return new WaitForSeconds(0.4f);
+
+            if (fireHandPrefab != null)
+            {
+                // A. Tính toán vị trí
+                float directionToPlayer = (player.position.x > transform.position.x) ? 1f : -1f;
+                Vector3 targetPos = player.position + new Vector3(directionToPlayer * interceptDistance, 0, 0);
+                Vector3 spawnPos = GetPredictedGroundPos(targetPos);
+
+                // Cộng thêm độ cao (Offset)
+                spawnPos.y += handHeightOffset;
+
+                // B. Sinh ra bàn tay
+                GameObject handObj = Instantiate(fireHandPrefab, spawnPos, Quaternion.identity);
+
+                // C. Set Scale to
+                handObj.transform.localScale = handScale;
+
+                // D. Setup damage & hướng
+                FireHandTrap handScript = handObj.GetComponent<FireHandTrap>();
+                if (handScript != null)
+                {
+                    float faceDir = (spawnPos.x > player.position.x) ? -1f : 1f;
+                    handScript.Setup(handDamage, faceDir);
+                }
+            }
+
+            // Chờ nốt thời gian còn lại
+            yield return new WaitForSeconds(Mathf.Max(0, skill.castDuration - 0.4f));
+        }
+        // 3. CÁC SKILL THƯỜNG KHÁC (Fireball...)
         else
         {
-            // Skill thường: Quay mặt về phía Player
+            // Logic mặc định cho các skill chưa được định nghĩa riêng
             FaceTargetInstant(player.position);
+
+            // [TRIGGER CHO SKILL THƯỜNG]
+            animator.SetTrigger(skill.animTrigger);
+            yield return new WaitForSeconds(skill.castDuration);
         }
 
-        // 3. Gọi Trigger Animation
-        animator.SetTrigger(skill.animTrigger);
-
-        // 4. Chờ diễn hoạt
-        yield return new WaitForSeconds(skill.castDuration);
     }
 
 
@@ -463,15 +531,6 @@ public class AttackAI : MonoBehaviour
             }
         }
     }
-
-    IEnumerator PerformAttack2()
-    {
-        animator.SetTrigger("Attack2");
-        yield return new WaitForSeconds(1.5f);
-    }
-
-    // --- CÁC HÀM GỌI BỞI ANIMATION EVENT ---
-    // Mỗi skill mới sẽ cần 1 hàm public ở đây để Animation Event gọi vào
 
     public void CastFireball()
     {
@@ -533,22 +592,25 @@ public class AttackAI : MonoBehaviour
 
         for (int w = 0; w < waves; w++)
         {
-            // 2. Chọn tầng để rải (Dựa trên object đã kéo vào)
-            float spawnY = transform.position.y; // Mặc định (fallback)
+            // --- [LOGIC MỚI: CHỌN TẦNG CHÍNH XÁC] ---
+            float spawnY = transform.position.y; // Fallback: Nếu quên kéo cả 2 tầng thì lấy vị trí Boss
 
-            // Random: 50% Tầng 1, 50% Tầng 2
-            bool useFloor2 = (Random.value > 0.5f);
+            // B1: Tạo danh sách chứa những tầng HỢP LỆ (Đã kéo vào Inspector)
+            List<Transform> validFloors = new List<Transform>();
 
-            if (useFloor2 && floor2Point != null)
+            if (floor1Point != null) validFloors.Add(floor1Point);
+            if (floor2Point != null) validFloors.Add(floor2Point);
+
+            // B2: Bốc thăm
+            if (validFloors.Count > 0)
             {
-                spawnY = floor2Point.position.y;
-                // Debug.Log($"Wave {w+1}: Rải Tầng 2 (Y={spawnY})");
+                // Random.Range với int là exclusive (không lấy cận trên), nên dùng 0 đến Count là chuẩn
+                int randomIndex = Random.Range(0, validFloors.Count);
+                spawnY = validFloors[randomIndex].position.y;
+
+                // Debug.Log($"Wave {w+1}: Chọn tầng {validFloors[randomIndex].name}");
             }
-            else if (floor1Point != null)
-            {
-                spawnY = floor1Point.position.y;
-                // Debug.Log($"Wave {w+1}: Rải Tầng 1 (Y={spawnY})");
-            }
+            // ----------------------------------------
 
             // 3. Rải thảm từ Limit Left đến Limit Right
             if (movement.limitLeft != null && movement.limitRight != null)
@@ -561,14 +623,14 @@ public class AttackAI : MonoBehaviour
                 {
                     Vector3 pos = new Vector3(x, spawnY, 0);
                     Instantiate(fireZonePrefab, pos, Quaternion.identity);
-                    
-                    // Rải rất nhanh (0.05s mỗi quả)
-                    yield return new WaitForSeconds(0.05f);
+
+                    // Rải rất nhanh (theo biến rainSpawnDelay)
+                    yield return new WaitForSeconds(rainSpawnDelay);
                 }
             }
 
-            // Nghỉ giữa các đợt (1 giây) trước khi rải đợt tiếp theo
-            yield return new WaitForSeconds(1.0f);
+            // Nghỉ giữa các đợt (theo biến waveDelay)
+            yield return new WaitForSeconds(waveDelay);
         }
     }
 

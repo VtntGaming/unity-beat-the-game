@@ -198,8 +198,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 087f2ac887e6db84f97f0b3f1f2026c0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fallSpeed: 5
-  existDuration: 6
+  fallSpeed: 7
+  existDuration: 7
   groundOffset: 0.5
   dotType: Fire
   burnDamagePerTick: 8

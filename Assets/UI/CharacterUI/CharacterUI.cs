@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using TMPro;
-
+using UnityEngine.UIElements;
+using System.Xml;
 public class CharacterUI : MonoBehaviour
 {
     private Entity playerHealth;
@@ -32,6 +33,13 @@ public class CharacterUI : MonoBehaviour
 
     // Armor UI
     private TMP_Text CoinText;
+
+    // TargetStats
+    float targetHPPercentage = 0;
+
+    // CurrentStats
+    float currentHPPercentage = 0;
+
 
     void Start()
     {
@@ -93,8 +101,11 @@ public class CharacterUI : MonoBehaviour
         int Coin = playerController.getCoin();
 
         // Cập nhật thanh HP
-        HPLeft.sizeDelta = new Vector2(BaseHPFrameWidth * (HP / MaxHP), BaseHPFrameHeight);
         HPText.text = string.Format("{0:F0}/{1:F0}", HP, MaxHP);
+        if (targetHPPercentage != HP / MaxHP)
+        {
+            targetHPPercentage = HP / MaxHP;
+        }
 
         // Cập nhật thanh MP
         ManaLeft.sizeDelta = new Vector2(BaseMPFrameWidth * (MP / MaxMP), BaseMPFrameHeight);
@@ -105,5 +116,16 @@ public class CharacterUI : MonoBehaviour
 
         // Cập nhật coin
         CoinText.text = string.Format("{0:F0}", Coin);
+
+        // Animate
+        float dt = Time.deltaTime;
+        if (currentHPPercentage != targetHPPercentage)
+        {
+            currentHPPercentage = Mathf.Lerp(currentHPPercentage, targetHPPercentage, 0.1f);
+        }
+
+        // Display
+        HPLeft.sizeDelta = new Vector2(BaseHPFrameWidth * currentHPPercentage, BaseHPFrameHeight);
+
     }
 }
