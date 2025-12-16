@@ -37,7 +37,21 @@ public class BossEntity : Entity
         {
             poiseTimer -= Time.deltaTime;
         }
+    }
 
+    public override void Deactivate()
+    {
+        unlockPortal();
+        base.Deactivate();
+    }
+
+    private void unlockPortal()
+    {
+        GameObject portal = GameObject.Find("InteractObject")?.transform.Find("Portal").gameObject;
+        if (portal != null)
+        {
+            portal.SetActive(true);
+        }
     }
 
     // Ghi đè hàm TakeDamage của cha

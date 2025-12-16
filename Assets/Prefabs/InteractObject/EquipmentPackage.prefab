@@ -194,7 +194,7 @@ MonoBehaviour:
   horizontalNudge: 1
   groundLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
 --- !u!61 &7355560549380612053
 BoxCollider2D:
   m_ObjectHideFlags: 0

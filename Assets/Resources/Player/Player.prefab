@@ -143,7 +143,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 8
-  jumpForce: 15
+  jumpForce: 16
   fastFallSpeed: 20
   fallMultiplier: 3
   lowJumpMultiplier: 2
@@ -409,6 +409,7 @@ MonoBehaviour:
     rolledBaseStat: 0
     upgradeBonusRolls: []
     rolledRarityMultiplier: 0
+  inventory: []
 --- !u!70 &2934856590352911093
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -443,8 +444,8 @@ CapsuleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.7}
-  m_Size: {x: 0.75, y: 1.3}
+  m_Offset: {x: -0.006231308, y: 0.6999999}
+  m_Size: {x: 0.99925613, y: 1.3}
   m_Direction: 0
 --- !u!114 &4790414112608161049
 MonoBehaviour:

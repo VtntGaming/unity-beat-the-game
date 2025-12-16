@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5915099953862858822}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: FlyingEnemy_Bee
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61,7 +61,7 @@ Transform:
   m_GameObject: {fileID: 3671538909209259211}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -1, z: -0, w: 0}
-  m_LocalPosition: {x: 0.017, y: -0.05, z: 0.09098711}
+  m_LocalPosition: {x: 0.017, y: -0.05, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -194,7 +194,7 @@ Transform:
   m_GameObject: {fileID: 6098525504648396198}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.93, y: -1.38, z: 0.041054025}
+  m_LocalPosition: {x: -2.93, y: -1.38, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -271,7 +271,7 @@ GameObject:
   - component: {fileID: 5168790147806607990}
   - component: {fileID: 8456656992995459555}
   - component: {fileID: 5201104838043096242}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: AttackZone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -287,7 +287,7 @@ Transform:
   m_GameObject: {fileID: 7422640344699133207}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -1, z: -0, w: 0}
-  m_LocalPosition: {x: -0.73, y: 0.5500001, z: 0.06602067}
+  m_LocalPosition: {x: -0.73, y: 0.5500001, z: 0}
   m_LocalScale: {x: 0.5, y: 0.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -367,7 +367,7 @@ Transform:
   m_GameObject: {fileID: 7992477627748468221}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.98, y: 0.03999996, z: 0.15}
+  m_LocalPosition: {x: 0.98, y: 0.03999996, z: 0}
   m_LocalScale: {x: 0.19021998, y: 0.17525998, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -392,6 +392,7 @@ GameObject:
   - component: {fileID: 5338442436171962477}
   - component: {fileID: 605552444869377937}
   - component: {fileID: 7248059477260406462}
+  - component: {fileID: 7677920166720156539}
   m_Layer: 8
   m_Name: Bee
   m_TagString: Enemy
@@ -639,7 +640,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a7c774d5bdcb7c49b490f7f8da12096, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 1414320094771272655, guid: 75d235c3394fb9d4cb8c7b28b01ea0f1, type: 3}
+  player: {fileID: 47293188203494114, guid: 77446fadd3cee6d4aa404a06103ba555, type: 3}
   prepareTime: 1
   attackSpeed: 5
   beeDamageZone: {fileID: 2484226125489478095}
@@ -700,3 +701,50 @@ PolygonCollider2D:
       - {x: 0.13499999, y: -0.055}
       - {x: 0.13499999, y: 0.145}
   m_UseDelaunayMesh: 0
+--- !u!114 &7677920166720156539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8673047514385725814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61704efa79a5c3641b8dc590d2f14862, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  coinPrefab: {fileID: 6016030534326057393, guid: 6f4e5d914b0b7c94db8ebcc383b51ba1, type: 3}
+  minCoinAmount: 1
+  maxCoinAmount: 5
+  healthPotionPrefab: {fileID: 1500066604316138782, guid: d37fee57d66238c49b05140ea2d47629, type: 3}
+  healthPotionDropChance: 0.2
+  orbDrops:
+  - prefab: {fileID: 223222326003678849, guid: 82d04671399d47f4fa262b858b031faa, type: 3}
+    dropChance: 0.15
+  - prefab: {fileID: 3564478390259272386, guid: 3ef8dbc63f6a3cb4a912b36dea4262d5, type: 3}
+    dropChance: 0.15
+  - prefab: {fileID: 7635704251119362625, guid: 08ce35928a6671d4089cb3df3143f648, type: 3}
+    dropChance: 0.15
+  - prefab: {fileID: 8043663846405050897, guid: 6d010a1360c37e3418b64b24bf10297c, type: 3}
+    dropChance: 0.15
+  collectablePrefab: {fileID: 8066002383994840488, guid: fcd43b524ff79b94191ecfd9d27c89e4, type: 3}
+  equipmentPackageDropChance: 0.35
+  equipmentDrops:
+  - itemData: {fileID: 11400000, guid: 977f9193a0f8c6e48a3faccfbf5b7d61, type: 2}
+    weight: 70
+  - itemData: {fileID: 11400000, guid: 0fb9b2a0805d48d4ea3223741ef41534, type: 2}
+    weight: 20
+  - itemData: {fileID: 11400000, guid: 034c9e2ac995a5640ae3803960606a75, type: 2}
+    weight: 5
+  - itemData: {fileID: 11400000, guid: c6ece6e5e0cb4f745a045814ef6c74f9, type: 2}
+    weight: 3
+  - itemData: {fileID: 11400000, guid: 21770d11d10ced9458aee0022efd36c1, type: 2}
+    weight: 70
+  - itemData: {fileID: 11400000, guid: 82c99c09e4524e847b11fea50078f769, type: 2}
+    weight: 20
+  - itemData: {fileID: 11400000, guid: 82aa5f5e238fc934bb7abfb165f55085, type: 2}
+    weight: 5
+  dropHeight: 1
+  largeDrop: 0
+  coinWaveCount: 3
+  waveInterval: 0.5

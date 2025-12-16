@@ -288,7 +288,7 @@ MonoBehaviour:
   dropPoint: {fileID: 6163374805043965191}
   dropForce: 3
   interactDistance: 3
-  player: {fileID: 0}
+  player: {fileID: 47293188203494114, guid: 77446fadd3cee6d4aa404a06103ba555, type: 3}
   playerTag: Player
   cloudSlots:
   - {fileID: 5698065644989394688}

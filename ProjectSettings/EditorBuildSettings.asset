@@ -17,6 +17,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Levels/Map2.unity
     guid: 3129a8806f473854d8dcdaad8c06433a
+  - enabled: 1
+    path: Assets/Levels/Shop.unity
+    guid: c2244f81ad739254d968dfc5e41e8730
+  - enabled: 1
+    path: Assets/Levels/Map3.unity
+    guid: 05ad35f3a43925a47851b6cb60d70bc2
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

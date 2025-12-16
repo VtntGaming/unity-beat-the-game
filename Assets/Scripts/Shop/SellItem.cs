@@ -72,7 +72,27 @@ public class SellItem : MonoBehaviour
             Transform slot = cloudSlots[i];
             GameObject display = Instantiate(itemDisplayPrefab, slot, false);
             display.transform.localPosition = Vector3.zero;
-            display.transform.localScale = Vector3.one;
+            // ✅ KIỂM TRA TÊN ITEM ĐỂ SET CỨNG SCALE
+            if (data.itemName == "Power Upgrade Orb")
+            {
+                display.transform.localScale = new Vector3(0.15f, 0.15f, 1f);
+            }
+            else if (data.itemName == "Reduce Dash Cooldown")
+            {
+                display.transform.localScale = new Vector3(0.4f, 0.4f, 1f);
+            }
+            else if (data.itemName == "Fire Orb")
+            {
+                display.transform.localScale = new Vector3(0.2f, 0.2f, 1f);
+            }
+            else if (data.itemName == "Double Jump Orb")
+            {
+                display.transform.localScale = new Vector3(0.15f, 0.15f, 1f);
+            }
+            else
+            {
+                display.transform.localScale = Vector3.one; // Scale mặc định là 1
+            }
             display.name = $"CloudItem_{i + 1}";
 
             // Gán sprite icon

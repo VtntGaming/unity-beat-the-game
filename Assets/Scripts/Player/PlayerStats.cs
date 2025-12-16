@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Linq;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(PlayerController))]
 public class PlayerStats : MonoBehaviour
@@ -12,6 +13,10 @@ public class PlayerStats : MonoBehaviour
     [Header("Equipped Items (Sockets)")]
     public EquipmentItem equippedSword;
     public EquipmentItem equippedArmor;
+
+    [Header("Inventory")] // 👈 THÊM MỚI: Túi đồ
+    public List<EquipmentItem> inventory = new List<EquipmentItem>();
+    private const int MAX_INVENTORY_SLOTS = 100; // Ví dụ: Giới hạn 20 ô
 
     // ======== PROGRESSION ========
     public PlayerProgression plrProgression = new PlayerProgression();
@@ -102,6 +107,13 @@ public class PlayerStats : MonoBehaviour
     /// Trả về TRUE nếu trang bị thành công (hoặc cho vào túi).
     /// Trả về FALSE nếu ổ đã đầy.
     /// </summary>
+    // PlayerStats.cs
+
+    /// <summary>
+    /// Thử trang bị một item.
+    /// Trả về TRUE nếu trang bị thành công (hoặc cho vào túi).
+    /// Trả về FALSE nếu ổ đã đầy VÀ túi đồ đã đầy.
+    /// </summary>
     public bool EquipItem(EquipmentItem itemToEquip)
     {
         if (itemToEquip == null || !itemToEquip.HasItem())
@@ -109,36 +121,100 @@ public class PlayerStats : MonoBehaviour
             return false;
         }
 
-        EquipmentType type = itemToEquip.GetItemType(); // 👈 Cần thêm hàm này vào EquipmentInstance
+        EquipmentType type = itemToEquip.GetItemType();
 
-        // 1. LOGIC TRANG BỊ KIẾM
+        // === LOGIC TRANG BỊ VÀO SOCKET (Ưu tiên 1) ===
+        EquipmentItem currentEquipped = null;
+
         if (type == EquipmentType.Sword)
         {
-            // Kiểm tra "socket" kiếm có rỗng không
+            currentEquipped = equippedSword;
             if (equippedSword == null || !equippedSword.HasItem())
             {
-                equippedSword = itemToEquip; // 👈 Trang bị vào
+                equippedSword = itemToEquip; // Trang bị vào socket rỗng
+                RecalculateStats(); // Tính lại chỉ số
                 updateEquipped();
+                Debug.Log($"Đã trang bị <color=green>{itemToEquip.GetItemName()}</color> vào socket!");
                 return true;
             }
         }
-        // 2. LOGIC TRANG BỊ GIÁP
         else if (type == EquipmentType.Armor)
         {
-            // Kiểm tra "socket" giáp có rỗng không
+            currentEquipped = equippedArmor;
             if (equippedArmor == null || !equippedArmor.HasItem())
             {
-                equippedArmor = itemToEquip; // 👈 Trang bị vào
+                equippedArmor = itemToEquip; // Trang bị vào socket rỗng
+                RecalculateStats();
                 updateEquipped();
+                Debug.Log($"Đã trang bị <color=green>{itemToEquip.GetItemName()}</color> vào socket!");
                 return true;
             }
         }
 
-        // (Sau này bạn có thể thêm logic cho vào túi đồ)
+        // === LOGIC CHUYỂN VÀO TÚI ĐỒ (Ưu tiên 2) ===
+        // Nếu socket đã đầy (currentEquipped != null), chuyển vào túi đồ.
+        if (inventory.Count < MAX_INVENTORY_SLOTS)
+        {
+            inventory.Add(itemToEquip);
+            Debug.Log($"Đã thêm <color=yellow>{itemToEquip.GetItemName()}</color> vào Túi Đồ ({inventory.Count}/{MAX_INVENTORY_SLOTS})");
+            return true;
+        }
 
-        // Ổ đã đầy
+        // === LOGIC THẤT BẠI (Ưu tiên 3) ===
+        // Ổ đã đầy và túi đồ cũng đầy
+        Debug.LogWarning($"❌ Túi đồ đã đầy ({MAX_INVENTORY_SLOTS} món). <color=red>{itemToEquip.GetItemName()}</color> bị bỏ lại!");
         return false;
     }
+    // PlayerStats.cs
+
+    /// <summary>
+    /// Trao đổi vật phẩm đang trang bị với vật phẩm trong Inventory.
+    /// </summary>
+    public void SwapItem(EquipmentItem itemFromInventory)
+    {
+        if (itemFromInventory == null || !itemFromInventory.HasItem() || !inventory.Contains(itemFromInventory))
+        {
+            Debug.LogError("Vật phẩm không hợp lệ hoặc không có trong túi đồ.");
+            return;
+        }
+
+        EquipmentType type = itemFromInventory.GetItemType();
+        EquipmentItem currentlyEquipped = null;
+
+        if (type == EquipmentType.Sword)
+        {
+            currentlyEquipped = equippedSword;
+            equippedSword = itemFromInventory; // Trang bị vật phẩm mới
+        }
+        else if (type == EquipmentType.Armor)
+        {
+            currentlyEquipped = equippedArmor;
+            equippedArmor = itemFromInventory; // Trang bị vật phẩm mới
+        }
+        else
+        {
+            Debug.LogError("Loại vật phẩm không thể trang bị (Chưa có socket).");
+            return;
+        }
+
+        // 1. Xóa vật phẩm mới ra khỏi túi đồ
+        inventory.Remove(itemFromInventory);
+
+        // 2. Đặt vật phẩm CŨ đang trang bị vào túi đồ (nếu có)
+        if (currentlyEquipped != null && currentlyEquipped.HasItem())
+        {
+            inventory.Add(currentlyEquipped);
+            Debug.Log($"Đã thay <color=yellow>{itemFromInventory.GetItemName()}</color> bằng <color=yellow>{currentlyEquipped.GetItemName()}</color> (chuyển vào túi đồ).");
+        }
+        else
+        {
+            Debug.Log($"Đã trang bị <color=green>{itemFromInventory.GetItemName()}</color> (không có vật phẩm cũ để trao đổi).");
+        }
+
+        RecalculateStats(); // Tính lại chỉ số sau khi thay đổi
+        updateEquipped(); // Cập nhật UI
+    }
+
 
     /// <summary>
     /// Hàm quan trọng: Tính toán lại tất cả chỉ số

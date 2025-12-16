@@ -681,19 +681,22 @@ public class AttackAI : MonoBehaviour
     // Giúp Boss không bị "ngáo" nhắm bắn lên trời khi Player nhảy
     Vector3 GetPredictedGroundPos(Vector3 targetPos)
     {
-        // Bắn tia xuống dưới 10m
-        RaycastHit2D hit = Physics2D.Raycast(targetPos, Vector2.down, 10f, movement.groundLayer);
+        // Bắn tia từ cao hơn vị trí Player một chút (0.5m) để tránh Start Inside Collider
+        Vector3 rayOrigin = targetPos + Vector3.up * 0.5f;
+
+        // Bắn tia xuống dưới 10.5m (10m + 0.5m offset)
+        RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.down, 10.5f, movement.groundLayer);
 
         if (hit.collider != null)
         {
-            // Trả về điểm chạm đất (Giữ nguyên X của Player, lấy Y của Đất)
+            // hit.point là mặt trên của sàn (tọa độ Y chính xác)
             return new Vector3(targetPos.x, hit.point.y, targetPos.z);
         }
 
-        // Trường hợp Player đang bay qua vực thẳm (không có đất dưới chân)
-        // Thì đành phải nhắm vào người vậy
+        // Trường hợp Player đang bay qua vực thẳm
         return targetPos;
     }
+
     // Hàm tìm vị trí thoáng (không bị trần nhà chặn) để di chuyển ra đó rồi nhảy
     Vector3? FindClearPositionForJump(Vector3 targetPos)
     {

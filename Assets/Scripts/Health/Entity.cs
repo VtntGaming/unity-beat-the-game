@@ -6,8 +6,8 @@ public class Entity : MonoBehaviour
     [Header("Health & Mana")]
     [SerializeField] public float startingHealth = 100f;
     [SerializeField] public float startingMana = 50f;
-    public float currentHealth { get; private set; }
-    public float currentMana { get; private set; }
+    [SerializeField] public float currentHealth { get; private set; }
+    [SerializeField] public float currentMana { get; private set; }
     public float maxHealth { get; private set; }
     public float maxMana { get; private set; }
     private Animator anim;
@@ -357,7 +357,7 @@ public class Entity : MonoBehaviour
         StartCoroutine(Invulnerability());
     }
 
-    private void Deactivate()
+    public virtual void Deactivate()
     {
         // Chỉ destroy nếu không phải là Player
         if (!CompareTag("Player"))

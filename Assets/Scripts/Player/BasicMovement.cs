@@ -24,7 +24,7 @@ public class BasicMovement : MonoBehaviour
     // ===================== Dash Settings =====================
     [Header("Dash Settings")]
     [SerializeField] private float dashDistance = 7f;            // Distance to dash horizontally
-    [SerializeField] private float dashDuration = 0.2f;          // Duration of dash movement
+    [SerializeField] private float dashDuration = 0.2f;          // Duration of dash movementperform
     [SerializeField] public float dashCooldownTime = 5f;         // Cooldown time for ground dash
     [SerializeField] public float minCooldown = 0.5f;           // Minimum cooldown after buff
     public float dashCooldown;                              // Current cooldown state
@@ -440,6 +440,8 @@ public class BasicMovement : MonoBehaviour
                 anim.SetBool("Grounded", false);  // Trigger fall if not grounded
                 rb.gravityScale = initialGravity;   // Restore gravity
                 isRolling = false;                  // Exit rolling state
+                capsuleCollider.size = new Vector2(0.75f, 1.3f);
+                capsuleCollider.offset = new Vector2(0, 0.7f);
                 yield break;                        // End the coroutine
             }
 

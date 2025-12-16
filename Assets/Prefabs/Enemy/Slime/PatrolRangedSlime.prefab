@@ -904,8 +904,36 @@ MonoBehaviour:
   maxCoinAmount: 5
   healthPotionPrefab: {fileID: 1500066604316138782, guid: d37fee57d66238c49b05140ea2d47629, type: 3}
   healthPotionDropChance: 0.2
-  orbPrefabs: []
+  orbDrops:
+  - prefab: {fileID: 223222326003678849, guid: 82d04671399d47f4fa262b858b031faa, type: 3}
+    dropChance: 0.15
+  - prefab: {fileID: 3564478390259272386, guid: 3ef8dbc63f6a3cb4a912b36dea4262d5, type: 3}
+    dropChance: 0.15
+  - prefab: {fileID: 7635704251119362625, guid: 08ce35928a6671d4089cb3df3143f648, type: 3}
+    dropChance: 0.15
+  - prefab: {fileID: 8043663846405050897, guid: 6d010a1360c37e3418b64b24bf10297c, type: 3}
+    dropChance: 0.15
+  collectablePrefab: {fileID: 8066002383994840488, guid: fcd43b524ff79b94191ecfd9d27c89e4, type: 3}
+  equipmentPackageDropChance: 0.35
+  equipmentDrops:
+  - itemData: {fileID: 11400000, guid: 21770d11d10ced9458aee0022efd36c1, type: 2}
+    weight: 70
+  - itemData: {fileID: 11400000, guid: 034c9e2ac995a5640ae3803960606a75, type: 2}
+    weight: 20
+  - itemData: {fileID: 11400000, guid: 0fb9b2a0805d48d4ea3223741ef41534, type: 2}
+    weight: 5
+  - itemData: {fileID: 11400000, guid: c6ece6e5e0cb4f745a045814ef6c74f9, type: 2}
+    weight: 2
+  - itemData: {fileID: 11400000, guid: 21770d11d10ced9458aee0022efd36c1, type: 2}
+    weight: 70
+  - itemData: {fileID: 11400000, guid: 82c99c09e4524e847b11fea50078f769, type: 2}
+    weight: 20
+  - itemData: {fileID: 11400000, guid: 82aa5f5e238fc934bb7abfb165f55085, type: 2}
+    weight: 5
   dropHeight: 0.5
+  largeDrop: 0
+  coinWaveCount: 3
+  waveInterval: 0.5
 --- !u!1001 &6075969510227169915
 PrefabInstance:
   m_ObjectHideFlags: 0
